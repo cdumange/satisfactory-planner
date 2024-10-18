@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "QmQvm6COvb3Lg4lnt6QI6sjdAgqpx3gLFW57JkyDgnTnD5qDAlUQrTbZMaNw2HOLy+e+99JUpt006jJeo3lPJg==",
+  "success": true,
+  "projectFilePath": "/home/cdumange/code/perso/test.mvc/Services/Services.csproj",
+  "expectedPackageFiles": [
+    "/home/cdumange/.nuget/packages/dapper/2.1.35/dapper.2.1.35.nupkg.sha512",
+    "/home/cdumange/.nuget/packages/jos.result/1.1.7/jos.result.1.1.7.nupkg.sha512",
+    "/home/cdumange/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.8/microsoft.aspnetcore.app.ref.8.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}

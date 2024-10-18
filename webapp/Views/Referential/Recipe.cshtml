@@ -1,0 +1,9 @@
+@model models.Recipe
+
+<div id="@Model.ID" class="grid-item" x-data="{editing:false}">
+    <div x-show="!editing" class="flex flex-row justify-between">
+        <span>@Model.Name</span>
+        <span hx-delete="/referential/recipe/@Model.ID" hx-trigger="click" hx-swap="delete"
+            hx-target="closest .grid-item" class="cursor-pointer">x</span>
+    </div>
+</div>

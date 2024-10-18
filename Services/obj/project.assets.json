@@ -1,0 +1,163 @@
+{
+  "version": 3,
+  "targets": {
+    "net8.0": {
+      "Dapper/2.1.35": {
+        "type": "package",
+        "compile": {
+          "lib/net7.0/Dapper.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net7.0/Dapper.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "JOS.Result/1.1.7": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/JOS.Result.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/JOS.Result.dll": {}
+        }
+      },
+      "models/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/models.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/models.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Dapper/2.1.35": {
+      "sha512": "YKRwjVfrG7GYOovlGyQoMvr1/IJdn+7QzNXJxyMh0YfFF5yvDmTYaJOVYWsckreNjGsGSEtrMTpnzxTUq/tZQw==",
+      "type": "package",
+      "path": "dapper/2.1.35",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Dapper.png",
+        "dapper.2.1.35.nupkg.sha512",
+        "dapper.nuspec",
+        "lib/net461/Dapper.dll",
+        "lib/net461/Dapper.xml",
+        "lib/net5.0/Dapper.dll",
+        "lib/net5.0/Dapper.xml",
+        "lib/net7.0/Dapper.dll",
+        "lib/net7.0/Dapper.xml",
+        "lib/netstandard2.0/Dapper.dll",
+        "lib/netstandard2.0/Dapper.xml",
+        "readme.md"
+      ]
+    },
+    "JOS.Result/1.1.7": {
+      "sha512": "4EFEeqse/GJAIpmdFvemQ01onWKBb7UzZp1QAkp+uPRL0e7chg8k7EmKEDPMrO7Q7v0JGzifqgCtXn3gI/ZABg==",
+      "type": "package",
+      "path": "jos.result/1.1.7",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "jos.result.1.1.7.nupkg.sha512",
+        "jos.result.nuspec",
+        "lib/netstandard2.0/JOS.Result.dll"
+      ]
+    },
+    "models/1.0.0": {
+      "type": "project",
+      "path": "../models/models.csproj",
+      "msbuildProject": "../models/models.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net8.0": [
+      "dapper >= 2.1.35",
+      "jos.result >= 1.1.7",
+      "models >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "/home/cdumange/.nuget/packages/": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "/home/cdumange/code/perso/test.mvc/Services/Services.csproj",
+      "projectName": "Services",
+      "projectPath": "/home/cdumange/code/perso/test.mvc/Services/Services.csproj",
+      "packagesPath": "/home/cdumange/.nuget/packages/",
+      "outputPath": "/home/cdumange/code/perso/test.mvc/Services/obj/",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "/home/cdumange/.nuget/NuGet/NuGet.Config"
+      ],
+      "originalTargetFrameworks": [
+        "net8.0"
+      ],
+      "sources": {
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "projectReferences": {
+            "/home/cdumange/code/perso/test.mvc/models/models.csproj": {
+              "projectPath": "/home/cdumange/code/perso/test.mvc/models/models.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net8.0": {
+        "targetAlias": "net8.0",
+        "dependencies": {
+          "dapper": {
+            "target": "Package",
+            "version": "[2.1.35, )"
+          },
+          "jos.result": {
+            "target": "Package",
+            "version": "[1.1.7, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[8.0.8, 8.0.8]"
+          }
+        ],
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.108/PortableRuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

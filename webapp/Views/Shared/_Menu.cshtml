@@ -1,0 +1,4 @@
+<div id="menu" class="flex flex-col gap-1" x-data="{ activePage: window.location.pathname }">
+    <a href="/referential" :class="activePage == '/referential' ? 'active' : ''">Referential</a>
+    <a href="/" :class="activePage == '/' ? 'active' : ''">Home</a>
+</div>

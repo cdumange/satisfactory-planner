@@ -1,0 +1,8 @@
+@model webapp.Views.Referential.ReferentialModel
+
+<div hx-on::after-request="htmx.trigger('#recipes', 'resources-changed')
+    ">
+    <partial name="Resources" model="@Model" />
+</div>
+-----------------------------------------------------
+<partial name="Recipes" model="@Model" />

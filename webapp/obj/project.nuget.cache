@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "AJS9wHCUC9wxZFU9sxnhFgaR/Hx5N3rXfi6kdnKbsOntCFSFqHNM0CB+ZSmBzsWJaIMZBKqsKjtvUaj3fTnHKA==",
+  "success": true,
+  "projectFilePath": "/home/cdumange/code/perso/test.mvc/webapp/webapp.csproj",
+  "expectedPackageFiles": [
+    "/home/cdumange/.nuget/packages/dapper/2.1.35/dapper.2.1.35.nupkg.sha512",
+    "/home/cdumange/.nuget/packages/jos.result/1.1.7/jos.result.1.1.7.nupkg.sha512",
+    "/home/cdumange/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.0/microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "/home/cdumange/.nuget/packages/microsoft.extensions.logging.abstractions/8.0.0/microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
+    "/home/cdumange/.nuget/packages/npgsql/8.0.5/npgsql.8.0.5.nupkg.sha512",
+    "/home/cdumange/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.8/microsoft.aspnetcore.app.ref.8.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}

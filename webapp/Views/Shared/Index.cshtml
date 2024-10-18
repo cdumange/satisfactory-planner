@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="bg-blue-400">
+    <div hx-get="/test/getValuePartial" hx-trigger="click" hx-swap="outerHTML">
+        Click here
+    </div>
+    <h1 class="display-4 font-bold">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>

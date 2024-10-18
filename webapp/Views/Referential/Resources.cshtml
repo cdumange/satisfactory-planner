@@ -1,0 +1,18 @@
+@model webapp.Views.Referential.ReferentialModel
+
+<div class="bg-slate-100 flex flex-col">
+    <div class="px-3">
+        <p class="my-2">Existing resources</p>
+        <div id="resources" class="grid grid-cols-4 gap-4">
+            @foreach (var r in @Model.Resources)
+            {
+                <partial name="Resource" model="@r" />
+            }
+        </div>
+    </div>
+    <form id="add-resource" hx-post="referential/AddResource" hx-target="previous #resources" hx-swap="beforeend"
+        class="m-auto">
+        <input type="text" name="name" placeholder="resource name" />
+        <button type="submit" value="Add">Add</button>
+    </form>
+</div>

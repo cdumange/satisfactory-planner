@@ -1,0 +1,39 @@
+@model webapp.Views.Referential.ReferentialModel
+
+<div id="recipes" hx-get="/referential/recipes" hx-trigger="resources-changed" hx-swap="outerHTML">
+    <div id="list" class="flex flex-col gap-3 py-3">
+        @foreach (var i in @Model.Recipes)
+        {
+            <partial name="Recipe" model="@i" />
+        }
+    </div>
+    <form x-data="{nbIngredients: 1}" hx-target="previous #list" hx-swap="beforeend" hx-post="/referential/addRecipe"
+        class="grid grid-cols-3">
+        <input type="text" name="name" placeholder="name of the recipe" class="max-h-10" />
+        <div>
+            <template x-for="i in nbIngredients" class="display-block">
+                <div :id="'ingredient' + (i-1)">
+                    <select :name="'resource[' + (i-1) + ']'" class="py-2.5 mt-1">
+                        @foreach (var r in @Model.Resources)
+                        {
+                            <option id="@r.ID" value="@r.ID">@r.Name</option>
+                        }
+                    </select>
+                    <input type="number" :name="'quantity[' + (i-1) + ']'" placeholder="number of resources needed"
+                        class="border-solid w-24 py-2 px-3"></input>
+
+                    <button type="button" x-on:click="nbIngredients++" class="text-lg px-2">+</input>
+                </div>
+            </template>
+        </div>
+        <div class="flex flex-col gap-3">
+            <select name="output" class="py-2.5 mt-1">
+                @foreach (var r in @Model.Resources)
+                {
+                    <option id="@r.ID" value="@r.ID">@r.Name</option>
+                }
+            </select>
+            <button type="submit">Create recipe</button>
+        </div>
+    </form>
+</div>

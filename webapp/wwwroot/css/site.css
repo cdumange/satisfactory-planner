@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+button {
+  @apply p-1 border-solid border-black rounded border border-spacing-3
+}
+
+.grid-item {
+  @apply p-2 rounded
+}
+
+.grid-item:nth-child(even), button:hover {
+  @apply bg-slate-500;
+  color: white;
+}
+
+.grid-item:nth-child(odd),
+button {
+  @apply bg-slate-200;
+}
+
+input[type="text"] {
+  @apply border-solid rounded border p-1 m-1;
+  color: black;
+}
+
+input[type="number"] {
+  @apply px-1 rounded border border-solid px-2 py-1
+}
+
+select {
+  @apply py-1 px-2 rounded;
+}
+
+#menu>a {
+  width: 100%;
+  color: black;
+  @apply bg-slate-200 px-3 py-2 rounded-tr-lg rounded-br-lg;
+}
+
+#menu>a:hover {
+  @apply bg-slate-500;
+  color: white;
+}
+
+#menu>a.active {
+  @apply bg-slate-500;
+  color: white;
+}

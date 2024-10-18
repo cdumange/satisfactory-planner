@@ -1,0 +1,13 @@
+@model models.Resource
+<div id="@Model.ID" x-data="{edit:false}" class="grid-item" hx-on::after-request="alert('test')">
+    <div x-show="!edit" class="flex justify-between">
+        <span id="@Model.ID" x-on:click="edit=true">@Model.Name</span>
+        <span hx-delete="/referential/resource/@Model.ID" hx-trigger="click" class="cursor-pointer"
+            hx-target="closest .grid-item" hx-swap="delete">x</span>
+    </div>
+    <form x-show="edit" x-on:click.outside="edit=false" hx-put="/referential/resource/@Model.ID"
+        hx-target="closest .grid-item" hx-swap="outerHTML" hx-on::after-request="alert('retest')">
+        <input type="text" name="name" placeholder="@Model.Name" />
+        <button type="submit">Update</button>
+    </form>
+</div>
