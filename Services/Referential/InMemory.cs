@@ -86,7 +86,7 @@ public class InMemoryRecipe : IRecipeManager
     private readonly IList<Recipe> recipes = new List<Recipe>();
     public Task<Result<Recipe>> Create(string Name,
         IEnumerable<Ingredient> ingredients,
-        Resource output)
+        Resource output, int quantity)
     {
         if (recipes.Any(x => x.Name == Name))
         {
@@ -96,7 +96,9 @@ public class InMemoryRecipe : IRecipeManager
         {
             ID = Guid.NewGuid(),
             Name = Name,
-            Output = output
+            Output = output,
+            Quantity = quantity,
+            Input = ingredients.ToList(),
         };
 
         recipes.Add(r);

@@ -7,7 +7,8 @@ CREATE TABLE recipes (
     id uuid PRIMARY KEY,
     Name text NOT NULL UNIQUE,
     output_id uuid NOT NULL,
-    FOREIGN KEY(output_id) REFERENCES resources(id) ON DELETE CASCADE
+    FOREIGN KEY(output_id) REFERENCES resources(id) ON DELETE CASCADE,
+    quantity int NOT NULL
 );
 
 CREATE TABLE ingredients (

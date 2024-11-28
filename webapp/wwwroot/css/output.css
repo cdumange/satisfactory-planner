@@ -617,61 +617,20 @@ video {
   display: grid;
 }
 
-.h-auto {
-  height: auto;
-}
-
-.h-1\/2 {
-  height: 50%;
-}
-
-.max-h-2 {
-  max-height: 0.5rem;
-}
-
-.max-h-5 {
-  max-height: 1.25rem;
-}
-
-.max-h-12 {
-  max-height: 3rem;
-}
-
 .max-h-10 {
   max-height: 2.5rem;
-}
-
-.w-auto {
-  width: auto;
-}
-
-.w-1\/2 {
-  width: 50%;
-}
-
-.w-16 {
-  width: 4rem;
 }
 
 .w-24 {
   width: 6rem;
 }
 
-.max-w-2 {
-  max-width: 0.5rem;
-}
-
-.max-w-fit {
-  max-width: -moz-fit-content;
-  max-width: fit-content;
-}
-
-.max-w-5 {
-  max-width: 1.25rem;
-}
-
 .cursor-pointer {
   cursor: pointer;
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .grid-cols-3 {
@@ -725,14 +684,14 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
 .px-3 {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
-}
-
-.py-3 {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
 }
 
 .py-2 {
@@ -745,23 +704,17 @@ video {
   padding-bottom: 0.625rem;
 }
 
-.py-1 {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-}
-
-.px-2 {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
 }
 
 .pb-3 {
   padding-bottom: 0.75rem;
 }
 
-.text-sm {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+.pt-2 {
+  padding-top: 0.5rem;
 }
 
 .text-lg {
@@ -810,6 +763,7 @@ button {
   --tw-border-opacity: 1;
   border-color: rgb(0 0 0 / var(--tw-border-opacity));
   padding: 0.25rem;
+  color: black;
 }
 
 .grid-item {
@@ -846,6 +800,7 @@ input[type="number"] {
   padding-right: 0.5rem;
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
+  color: black;
 }
 
 select {
@@ -854,6 +809,7 @@ select {
   padding-bottom: 0.25rem;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+  color: black;
 }
 
 #menu>a {

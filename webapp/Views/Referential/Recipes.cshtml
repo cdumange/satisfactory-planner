@@ -4,7 +4,9 @@
     <div id="list" class="flex flex-col gap-3 py-3">
         @foreach (var i in @Model.Recipes)
         {
-            <partial name="Recipe" model="@i" />
+            <partial name="Recipe" model="@new RecipeEditionModel {
+                Recipe = i,Resources = @Model.Resources
+            }" />
         }
     </div>
     <form x-data="{nbIngredients: 1}" hx-target="previous #list" hx-swap="beforeend" hx-post="/referential/addRecipe"
@@ -26,13 +28,18 @@
                 </div>
             </template>
         </div>
-        <div class="flex flex-col gap-3">
+        <div class="grid grid-cols-2 gap-3">
+            <label class="pt-2">Resource produced:</label>
             <select name="output" class="py-2.5 mt-1">
                 @foreach (var r in @Model.Resources)
                 {
                     <option id="@r.ID" value="@r.ID">@r.Name</option>
                 }
             </select>
+            <label class="pt-2">Quantity:</label>
+            <input type="number" :name="'output_quantity'" placeholder="number of output produced"
+                class="border-solid w-24 py-2 px-3"></input>
+
             <button type="submit">Create recipe</button>
         </div>
     </form>

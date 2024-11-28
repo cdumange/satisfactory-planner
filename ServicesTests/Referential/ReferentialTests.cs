@@ -50,10 +50,16 @@ public class ReferentialTests : IAsyncLifetime
         Assert.Succeeded(output);
 
         // When
-        var recipe = await i.Create("screws", new[] { new Ingredient {
-            Quantity = 20,
-            Resource = input.Data,
-        } }.AsEnumerable(), output.Data);
+        var recipe = await i.Create(
+            "screws",
+            new Ingredient[] {
+                new Ingredient {
+                    Quantity = 20,
+                    Resource = input.Data,
+                }
+            }.AsEnumerable(),
+            output.Data,
+            1);
         Assert.Succeeded(recipe);
 
         // Then
@@ -88,14 +94,16 @@ public class ReferentialTests : IAsyncLifetime
                 new Ingredient { Quantity = 20, Resource = iron.Data },
                 new Ingredient { Quantity = 5, Resource = ironTube.Data },
             ],
-            screw.Data
+            screw.Data,
+            1
         );
         Assert.Succeeded(ironScrew);
 
         var steelScrew = await i.Create(
             "SteelScrew",
             [new Ingredient { Quantity = 10, Resource = steel.Data }],
-            screw.Data
+            screw.Data,
+            1
         );
         Assert.Succeeded(steelScrew);
 

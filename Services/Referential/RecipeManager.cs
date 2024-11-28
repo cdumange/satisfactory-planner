@@ -18,13 +18,16 @@ public class RecipeManager : IRecipeManager
     public async Task<Result<Recipe>> Create(
         string Name,
         IEnumerable<Ingredient> ingredients,
-        Resource output)
+        Resource output,
+        int outputQuantity)
     {
         var recipe = new Recipe
         {
             ID = Guid.NewGuid(),
             Name = Name,
-            Output = output
+            Output = output,
+            Quantity = outputQuantity,
+            Input = ingredients.ToList(),
         };
 
         try
@@ -32,38 +35,20 @@ public class RecipeManager : IRecipeManager
             _conn.Open();
             using var tr = _conn.BeginTransaction();
             var res = await _conn.ExecuteAsync(@"
-                INSERT INTO recipes(id, name, output_id)
-                VALUES(:id, :name, :output)", new
+                INSERT INTO recipes(id, name, output_id, quantity)
+                VALUES(:id, :name, :output, :quantity)", new
             {
                 id = recipe.ID,
                 name = Name,
-                output = output.ID
+                output = output.ID,
+                quantity = outputQuantity,
             });
 
-            var ig = new List<Ingredient>();
-            var args = ingredients.Select(x =>
-            {
-                ig.Add(new Ingredient
-                {
-                    Quantity = x.Quantity,
-                    Resource = x.Resource,
-                });
+            await InsertIngredients(recipe);
 
-                return new
-                {
-                    resource = x.Resource.ID,
-                    recipe = recipe.ID,
-                    qt = x.Quantity
-                };
-            });
-
-            await _conn.ExecuteAsync(@"
-                    INSERT INTO ingredients (resource_id, recipe_id, quantity)
-                    VALUES (:resource, :recipe, :qt);
-                ", args);
 
             tr.Commit();
-            return Result.Success(recipe with { Input = ig });
+            return Result.Success(recipe);
         }
         catch (Exception e)
         {
@@ -90,8 +75,8 @@ public class RecipeManager : IRecipeManager
     {
         var res = await _conn.QueryAsync<(Guid id, string name,
         Guid output_id, string output_name,
-        Guid resource_id, string resource_name, int quantity)>(@"
-            SELECT r.id, r.name, r.output_id, r1.name as output_name , i.resource_id, r2.name as resource_name, i.quantity
+        Guid resource_id, string resource_name, int resource_quantity, int quantity)>(@"
+            SELECT r.id, r.name, r.output_id, r1.name as output_name , i.resource_id, r2.name as resource_name, r.quantity as resource_quantity, i.quantity
             FROM recipes r
             INNER JOIN ingredients i
                 ON i.recipe_id = r.id
@@ -106,7 +91,7 @@ public class RecipeManager : IRecipeManager
         var recipes = new List<Recipe>();
         Recipe? currentRecipe = null;
 
-        foreach (var (id, name, output_id, output_name, resource_id, resource_name, quantity) in res)
+        foreach (var (id, name, output_id, output_name, resource_id, resource_name, resource_quantity, quantity) in res)
         {
             if (currentRecipe is null || currentRecipe.ID != id)
             {
@@ -119,6 +104,7 @@ public class RecipeManager : IRecipeManager
                         ID = output_id,
                         Name = output_name
                     },
+                    Quantity = resource_quantity,
                     Input = new List<Ingredient>()
                 };
                 recipes.Add(currentRecipe);
@@ -141,20 +127,47 @@ public class RecipeManager : IRecipeManager
 
     public async Task<Result<Recipe>> GetByID(Guid id, bool hydrate = false)
     {
-        var res = await _conn.QueryFirstAsync<PartialRecipe>("SELECT id, name FROM recipes WHERE id = :id", new { id });
-        if (!hydrate)
-            return Result.Success(new Recipe
-            {
-                ID = res.ID,
-                Name = res.Name,
-                Output = null,
-                Input = null
-            });
+        var res = await this.SearchRecipes(@"
+            SELECT r.id, r.name, r1.id, r1.name, r.quantity
+            FROM recipes r 
+            INNER JOIN resources r1
+                ON r.output_id = r1.id
+            WHERE r.id = :id", new { id });
 
-        return await FillRecipe(res);
+        if (!res.Any())
+        {
+            return Result.Failure<Recipe>(new Error(IReferentialManager.ReferentialError, $"could not find {id}"));
+        }
+
+        if (!hydrate)
+            return Result.Success(res.First());
+
+        return await FillRecipe(res.First());
     }
 
-    private async Task<Result<Recipe>> FillRecipe(PartialRecipe recipe)
+    private async Task<IEnumerable<Recipe>> SearchRecipes(string sql, object param)
+    {
+        var res = await _conn.QueryAsync<(
+            Guid id,
+            string name,
+            Guid resourceID,
+            string resourceName,
+            int quantity)>(sql, param);
+        return res.Select(x => new Recipe
+        {
+            ID = x.id,
+            Name = x.name,
+            Output = new Resource
+            {
+                ID = x.resourceID,
+                Name = x.resourceName
+            },
+            Quantity = x.quantity,
+            Input = null
+        });
+    }
+
+    private async Task<Result<Recipe>> FillRecipe(Recipe recipe)
     {
         var ingredients = await _conn.QueryAsync<(Guid id, string name, int quantity)>(@"
         SELECT r.id, r.name, i.quantity
@@ -163,17 +176,13 @@ public class RecipeManager : IRecipeManager
             on r.id = i.resource_id
         WHERE i.recipe_id = :id", new { id = recipe.ID });
 
-        var output = await _conn.QuerySingleAsync<Resource>(@"SELECT r.id, r.name 
-            FROM resources r
-            INNER JOIN recipes r1
-                ON r1.output_id = r.id
-            WHERE r1.id = :id", new { id = recipe.ID });
 
         return Result<Recipe>.Success(new Recipe
         {
             ID = recipe.ID,
             Name = recipe.Name,
-            Output = output,
+            Output = recipe.Output,
+            Quantity = recipe.Quantity,
             Input = ingredients.Select(x => new Ingredient
             {
                 Resource = new Resource
@@ -188,8 +197,8 @@ public class RecipeManager : IRecipeManager
 
     public async Task<Result<IEnumerable<Recipe>>> RecipesWith(Resource resource)
     {
-        var recipes = await _conn.QueryAsync<PartialRecipe>(@"
-            SELECT id, name 
+        var recipes = await SearchRecipes(@"
+            SELECT r.id, r.name, r1.id, r1.name, r.quantity
             FROM recipes r
             INNER JOIN ingredients i
                 on i.recipe_id = r.id
@@ -206,12 +215,50 @@ public class RecipeManager : IRecipeManager
         return Result.Success(tasks.Select(x => x.Result.Data));
     }
 
-    public async Task<Result> Update(Recipe resource)
+    public async Task<Result> Update(Recipe recipe)
     {
+        _conn.Open();
+        using var tr = _conn.BeginTransaction();
+
         await _conn.ExecuteAsync(@"
             UPDATE recipes
-                set name = :name, ouput_id = :output
-            WHERE id = :id", new { id = resource.ID, name = resource.Name, output = resource.Output.ID });
+                set name = :name, ouput_id = :output, quantity = :quantity
+            WHERE id = :id", new
+        {
+            id = recipe.ID,
+            name = recipe.Name,
+            output = recipe.Output.ID,
+            quantity = recipe.Quantity
+        });
+
+        tr.Commit();
+        return Result.Success();
+    }
+
+    private async Task<Result> UpdateIngredients(Recipe recipe)
+    {
+        await _conn.ExecuteAsync("DELETE FROM ingredients WHERE recipe_id = :id", new { recipe.ID });
+        return await InsertIngredients(recipe);
+    }
+
+    private async Task<Result> InsertIngredients(Recipe recipe)
+    {
+        var ig = new List<Ingredient>();
+        var args = recipe.Input.Select(x =>
+        {
+            return new
+            {
+                resource = x.Resource.ID,
+                recipe = recipe.ID,
+                qt = x.Quantity
+            };
+        });
+
+        await _conn.ExecuteAsync(@"
+                    INSERT INTO ingredients (resource_id, recipe_id, quantity)
+                    VALUES (:resource, :recipe, :qt);
+                ", args);
+
         return Result.Success();
     }
 }

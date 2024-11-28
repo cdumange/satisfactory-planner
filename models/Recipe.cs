@@ -14,6 +14,7 @@ namespace models
     {
         public List<Ingredient> Input { get; init; } = new List<Ingredient>();
         public required Resource Output { get; init; }
+        public required int Quantity { get; init; }
     }
 
     public record Ingredient

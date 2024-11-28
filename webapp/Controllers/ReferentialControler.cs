@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
 using models;
 using Services.Referential;
+using webapp.Models;
 using webapp.Views.Referential;
 
 namespace webapp.Controllers
@@ -13,22 +14,31 @@ namespace webapp.Controllers
         string name,
         List<string> resource,
         List<int> quantity,
-        Guid output
+        Guid output,
+        int output_quantity
     );
 
-    public class ReferentialController(
-        IReferentialManager referential,
-        ILogger<ReferentialController> logger
-    ) : Controller
+    public class ReferentialController : Controller
     {
+        private readonly IReferentialManager _referential;
+        private readonly ILogger _logger;
+        public ReferentialController(
+            IReferentialManager referential,
+            ILogger<ReferentialController> logger
+        )
+        {
+            this._referential = referential;
+            this._logger = logger;
+        }
+
         public async Task<IActionResult> Index()
         {
-            return View("Referential", await ReferentialModel.Initialize(referential));
+            return View("Referential", await ReferentialModel.Initialize(_referential));
         }
 
         public async Task<IActionResult> AddResource([FromForm] CreationRequest resource)
         {
-            var res = await referential.Resources.Create(resource.name);
+            var res = await _referential.Resources.Create(resource.name);
             if (res.Failed)
             {
                 return BadRequest(res.Error);
@@ -41,7 +51,7 @@ namespace webapp.Controllers
         public async Task<IActionResult> UpdateResource([FromForm] string name, Guid id)
         {
             var resource = new Resource { ID = id, Name = name };
-            var res = await referential.Resources.Update(resource);
+            var res = await _referential.Resources.Update(resource);
             if (res.Failed)
             {
                 return BadRequest(res.Error);
@@ -53,7 +63,7 @@ namespace webapp.Controllers
         [HttpDelete("/referential/resource/{id}")]
         public async Task<IActionResult> DeleteResource(Guid id)
         {
-            var res = await referential.Resources.Delete(id);
+            var res = await _referential.Resources.Delete(id);
             if (res.Failed)
             {
                 return BadRequest(res.Error);
@@ -65,11 +75,12 @@ namespace webapp.Controllers
         [HttpGet("/referential/recipes")]
         public async Task<IActionResult> GetRecipes()
         {
-            return PartialView("Recipes", await ReferentialModel.Initialize(referential));
+            return PartialView("Recipes", await ReferentialModel.Initialize(_referential));
         }
 
         public async Task<IActionResult> AddRecipe([FromForm] RecipeRequest request)
         {
+            _logger.LogDebug("received : ", request);
             if (request.name == null
             || request.quantity.Count == 0
             || request.quantity.Count != request.resource.Count
@@ -94,19 +105,29 @@ namespace webapp.Controllers
             }
 
 
-            var res = await referential.Recipes.Create(request.name, ingredients, new Resource { ID = request.output, Name = string.Empty } /* TODO */);
+            var res = await _referential.Recipes.Create(
+                request.name,
+                ingredients,
+                new Resource { ID = request.output, Name = string.Empty },
+                request.output_quantity);
             if (res.Failed)
             {
                 return BadRequest(res.Error);
             }
 
-            return PartialView("Recipe", res.Data);
+            var resources = await _referential.Resources.GetAll();
+
+            return PartialView("Recipe", new RecipeEditionModel
+            {
+                Recipe = res.Data,
+                Resources = resources.Data
+            });
         }
 
         [HttpDelete("/referential/recipe/{id}")]
         public async Task<IActionResult> DeleteRecipe(Guid id)
         {
-            var res = await referential.Recipes.Delete(id);
+            var res = await _referential.Recipes.Delete(id);
             if (res.Failed)
             {
                 return BadRequest();

@@ -1,9 +1,70 @@
-@model models.Recipe
+@model webapp.Models.RecipeEditionModel
 
-<div id="@Model.ID" class="grid-item" x-data="{editing:false}">
-    <div x-show="!editing" class="flex flex-row justify-between">
-        <span>@Model.Name</span>
-        <span hx-delete="/referential/recipe/@Model.ID" hx-trigger="click" hx-swap="delete"
+<div id="@Model.Recipe.ID" class="grid-item" x-data="{editing:false}">
+    <div class="flex flex-row justify-between" x-on:click="editing=true">
+        <span>@Model.Recipe.Name</span>
+        <div>
+            @foreach (var i in @Model.Recipe.Input)
+            {
+                    <p>@i.Quantity * @i.Resource.Name </p>
+            }
+        </div>
+        <p>-></p>
+        <p>@Model.Recipe.Quantity * @Model.Recipe.Output.Name</p>
+        <span hx-delete="/referential/recipe/@Model.Recipe.ID" hx-trigger="click" hx-swap="delete"
             hx-target="closest .grid-item" class="cursor-pointer">x</span>
+    </div>
+    <div x-show="editing" class="flex flex-row justify-between">
+        <div>
+            <label>Recipe name:</label>
+            <input type="text" name="name" placeholder="name of the recipe" class="max-h-10"
+                value="@Model.Recipe.Name" />
+        </div>
+        <div>
+            @foreach (var i in @Model.Recipe.Input)
+            {
+                    <div :id="'ingredient-' + @i.Resource.ID">
+                        <select :name="'resource[' + (i-1) + ']'" class="py-2.5 mt-1" value="@i.Resource.ID">
+                        @foreach (var r in @Model.Resources)
+                        {
+                            if (r.ID == i.Resource.ID)
+                            {
+                                            <option id="@r.ID" value="@r.ID" selected>@r.Name</option>
+                            }
+                            else
+                            {
+                                            <option id="@r.ID" value="@r.ID">@r.Name</option>
+                            }
+                        }
+                        </select>
+                        <input type="number" :name="'quantity[' + (i-1) + ']'" placeholder="number of resources needed"
+                            class="border-solid w-24 py-2 px-3" value="@i.Quantity" />
+
+                        <button type="button" x-on:click="nbIngredients++" class="text-lg px-2">+</button>
+                    </div>
+            }
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+            <label class="pt-2">Resource produced:</label>
+            <select name="output" class="py-2.5 mt-1">
+                @foreach (var r in @Model.Resources)
+                {
+                    if (r.ID == Model.Recipe.ID)
+                    {
+                                <option id="@r.ID" value="@r.ID" selected>@r.Name</option>
+                    }
+                    else
+                    {
+                                <option id="@r.ID" value="@r.ID">@r.Name</option>
+                    }
+                }
+            </select>
+            <label class="pt-2">Quantity:</label>
+            <input type="number" :name="'output_quantity'" placeholder="number of output produced"
+                class="border-solid w-24 py-2 px-3" value="@Model.Recipe.Quantity"></input>
+
+            <button type="submit">Create recipe</button>
+            <button type="button" x-on:click="editing=false">Cancel</input>
+        </div>
     </div>
 </div>

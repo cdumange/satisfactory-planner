@@ -30,7 +30,7 @@ public interface IRecipeManager
 {
     Task<Result<Recipe>> Create(string Name,
         IEnumerable<Ingredient> ingredients,
-        Resource output);
+        Resource output, int Quantity);
     Task<Result> Update(Recipe resource);
     Task<Result> Delete(Guid recipeID);
     Task<Result<Recipe>> GetByID(Guid id, bool hydrate);
